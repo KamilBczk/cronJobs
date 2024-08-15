@@ -3,11 +3,11 @@ const { accountingData } = require("./accountingData");
 const { historyCheck } = require("./historyCheck");
 
 async function splitJobs() {
+  const startTime = new Date();
   const sql = await getSql();
   const countQuery =
     await sql.query`SELECT COUNT(*) AS count FROM cbso.jobs where status = 'todo'`;
   const count = countQuery.recordset[0].count;
-  console.log(count);
   if (count === 0) return;
   else {
     const jobs =
@@ -19,6 +19,7 @@ async function splitJobs() {
       if (type === "historyCheck") await historyCheck(element);
     }
   }
+  console.log(`${timeTaken} ms`);
 }
 
 module.exports = {
