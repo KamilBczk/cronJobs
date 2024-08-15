@@ -7,11 +7,11 @@ const { getBelgiumTime } = require("./utils/time");
 cron.schedule("* * * * *", async () => {
   const date = getBelgiumTime();
   console.log(
-    date.getHours +
+    date.getHours() +
       ":" +
-      date.getMinutes +
+      date.getMinutes() +
       ":" +
-      date.getMilliseconds +
+      date.getMilliseconds() +
       "\tExecuting splitJobs()"
   );
   try {
@@ -24,11 +24,11 @@ cron.schedule("* * * * *", async () => {
 cron.schedule("0 12 * * *", async () => {
   const date = getBelgiumTime();
   console.log(
-    date.getHours +
+    date.getHours() +
       ":" +
-      date.getMinutes +
+      date.getMinutes() +
       ":" +
-      date.getMilliseconds +
+      date.getMilliseconds() +
       "\tExecuting dailyExtract()"
   );
   try {
