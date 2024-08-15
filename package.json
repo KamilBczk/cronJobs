@@ -1,0 +1,21 @@
+{
+  "name": "cronjobs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jszip": "^3.10.1",
+    "mssql": "^11.0.1",
+    "node-cron": "^3.0.3",
+    "nodemon": "^3.1.4",
+    "uuid": "^10.0.0"
+  }
+}
