@@ -19,6 +19,8 @@ async function splitJobs() {
       if (type === "historyCheck") await historyCheck(element);
     }
   }
+  const endTime = new Date();
+  const timeTaken = endTime - startTime;
   console.log(`${timeTaken} ms`);
 }
 
