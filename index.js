@@ -12,7 +12,7 @@ cron.schedule("* * * * *", async () => {
   }
 });
 
-cron.schedule("* * * * *", async () => {
+cron.schedule("0 12 * * *", async () => {
   console.log("Executing dailyExtract()");
   try {
     await dailyExtract();
