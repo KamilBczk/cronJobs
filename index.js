@@ -2,9 +2,18 @@ const cron = require("node-cron");
 require("dotenv").config();
 const { splitJobs } = require("./processingJobs/splitJobs");
 const { dailyExtract } = require("./dailyExtract/index");
+const { getBelgiumTime } = require("./utils/time");
 
 cron.schedule("* * * * *", async () => {
-  console.log("Executing splitJobs()");
+  const date = getBelgiumTime();
+  console.log(
+    date.getHours +
+      ":" +
+      date.getMinutes +
+      ":" +
+      date.getMilliseconds +
+      "\tExecuting splitJobs()"
+  );
   try {
     await splitJobs();
   } catch (e) {
@@ -13,7 +22,15 @@ cron.schedule("* * * * *", async () => {
 });
 
 cron.schedule("0 12 * * *", async () => {
-  console.log("Executing dailyExtract()");
+  const date = getBelgiumTime();
+  console.log(
+    date.getHours +
+      ":" +
+      date.getMinutes +
+      ":" +
+      date.getMilliseconds +
+      "\tExecuting dailyExtract()"
+  );
   try {
     await dailyExtract();
   } catch (e) {
