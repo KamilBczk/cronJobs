@@ -68,7 +68,7 @@ async function historyCheck(record) {
         request.input("data", sql.VarChar(sql.MAX), JSON.stringify(jsonSaveDb));
 
         await request.query(
-          "INSERT INTO cbso.jobs (guid, createdOn, updatedOn, status, type, data) VALUES (@guid, @createdOn, @updatedOn, @status, @type, @data)"
+          `INSERT INTO cbso.jobs (guid, createdOn, updatedOn, status, type, data, priority) VALUES (@guid, @createdOn, @updatedOn, @status, @type, @data, ${record.priority})`
         );
       }
     }

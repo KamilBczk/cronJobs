@@ -11,7 +11,7 @@ async function splitJobs() {
   if (count === 0) return;
   else {
     const jobs =
-      await sql.query`SELECT TOP (75) * FROM cbso.jobs where status = 'todo' order by createdOn asc`;
+      await sql.query`SELECT TOP (5) * FROM cbso.jobs where status = 'todo' order by priority desc, createdOn`;
     for (let i = 0; i < jobs.recordset.length; i++) {
       const element = jobs.recordset[i];
       const type = element.type;
