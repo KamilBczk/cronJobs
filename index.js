@@ -7,32 +7,15 @@ const { relations } = require("./processingJobs/relations");
 const { getSql } = require("./utils/databaseConnection");
 const { syncEnterprise } = require("./sync");
 
-//cron.schedule("*/10 * * * * *", async () => {
-//console.log("a");
-//});
-
-// cron.schedule("0 12 * * *", async () => {
-//   const date = getBelgiumTime();
-//   console.log(
-//     date.getHours() +
-//       ":" +
-//       date.getMinutes() +
-//       ":" +
-//       date.getMilliseconds() +
-//       "\tExecuting dailyExtract()"
-//   );
-//   try {
-//     await dailyExtract();
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const debug = true;
 
 (async () => {
   while (true) {
     try {
-      await syncEnterprise();
+      await syncEnterprise(debug);
+      if (debug === true)
+        break;
     } catch (e) {
       console.log(e);
     }
