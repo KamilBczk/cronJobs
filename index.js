@@ -7,9 +7,9 @@ const { relations } = require("./processingJobs/relations");
 const { getSql } = require("./utils/databaseConnection");
 const { syncEnterprise } = require("./sync");
 
-cron.schedule("*/10 * * * * *", async () => {
-  //console.log("a");
-});
+//cron.schedule("*/10 * * * * *", async () => {
+//console.log("a");
+//});
 
 // cron.schedule("0 12 * * *", async () => {
 //   const date = getBelgiumTime();
