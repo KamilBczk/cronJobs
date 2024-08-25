@@ -7,22 +7,9 @@ const { relations } = require("./processingJobs/relations");
 const { getSql } = require("./utils/databaseConnection");
 const { syncEnterprise } = require("./sync");
 
-// cron.schedule("* * * * *", async () => {
-//   const date = getBelgiumTime();
-//   console.log(
-//     date.getHours() +
-//       ":" +
-//       date.getMinutes() +
-//       ":" +
-//       date.getMilliseconds() +
-//       "\tExecuting splitJobs()"
-//   );
-//   try {
-//     await splitJobs();
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
+cron.schedule("*/10 * * * * *", async () => {
+  //console.log("a");
+});
 
 // cron.schedule("0 12 * * *", async () => {
 //   const date = getBelgiumTime();
@@ -40,11 +27,16 @@ const { syncEnterprise } = require("./sync");
 //     console.log(e);
 //   }
 // });
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 (async () => {
-  try {
-    await syncEnterprise();
-  } catch (e) {
-    console.log(e);
+  while (true) {
+    try {
+      await syncEnterprise();
+    } catch (e) {
+      console.log(e);
+    }
+    //await delay(5000); // Attendre 10 secondes avant de relancer la tâche
   }
 })();
+

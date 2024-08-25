@@ -5,21 +5,22 @@ async function getAccountingData(references, sql) {
   let allAccountingData = [];
   for (let i = 0; i < yearsToFetch.length; i++) {
     const element = references[yearsToFetch[i]];
-    element.forEach((item) => {
-      const accountingDataToPush = {
-        referenceNumber: item.ReferenceNumber,
-        referenceNumberYear: item.ReferenceNumber.split("-")[0],
-        referenceNumberCount: item.ReferenceNumber.split("-")[1],
-        depositDate: item.DepositDate,
-        exerciseStartDate: item.ExerciseDates.startDate,
-        exerciseEndDate: item.ExerciseDates.endDate,
-        accountingDataUrl: item.AccountingDataURL,
-      };
-      if (accountingDataToPush.accountingDataUrl !== null)
-        allAccountingData.push(accountingDataToPush);
-    });
+    if (element !== null) {
+      element.forEach((item) => {
+        const accountingDataToPush = {
+          referenceNumber: item.ReferenceNumber,
+          referenceNumberYear: item.ReferenceNumber.split("-")[0],
+          referenceNumberCount: item.ReferenceNumber.split("-")[1],
+          depositDate: item.DepositDate,
+          exerciseStartDate: item.ExerciseDates.startDate,
+          exerciseEndDate: item.ExerciseDates.endDate,
+          accountingDataUrl: item.AccountingDataURL,
+        };
+        if (accountingDataToPush.accountingDataUrl !== null)
+          allAccountingData.push(accountingDataToPush);
+      });
+    }
   }
-
   const accountingData = await getValidAccountingData(allAccountingData);
   return accountingData;
 }
@@ -58,7 +59,7 @@ async function getValidAccountingData(allAccountingData) {
       }
 
       const data = await response.json();
-      validAccountingData.push(data); // Ajoute les données réussies au tableau
+      validAccountingData.push({ referenceData: item, data: data }); // Ajoute les données réussies au tableau
       //   console.log(`Data fetched successfully for ${item.referenceNumber}`);
 
       previousYear = item.referenceNumberYear;

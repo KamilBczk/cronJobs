@@ -16,15 +16,27 @@ async function getReferences(enterprise, sql) {
 }
 
 async function getReference(enterpriseNumber, year) {
-  const url = `https://ws.cbso.nbb.be/authentic/legalEntity/0402206045/references?year=${year}`;
-  const reference = await fetch(url, {
-    headers: {
-      "X-Request-Id": uuidv4(),
-      Accept: "application/json",
-      "NBB-CBSO-Subscription-Key": process.env.CSBO_AUTHENTIC_TOKEN,
-    },
-  });
-  return await reference.json();
+  const url = `https://ws.cbso.nbb.be/authentic/legalEntity/${enterpriseNumber}/references?year=${year}`;
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "X-Request-Id": uuidv4(),
+        Accept: "application/json",
+        "NBB-CBSO-Subscription-Key": process.env.CSBO_AUTHENTIC_TOKEN,
+      },
+    });
+
+    // Vérifiez si la réponse est OK (code de statut HTTP 200-299)
+    if (!response.ok) {
+      //console.error(`Erreur lors de la récupération des données : ${response.statusText}`);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    //console.error(`Erreur de requête : ${error.message}`);
+    return null;
+  }
 }
 
 function getYearsToFetch() {

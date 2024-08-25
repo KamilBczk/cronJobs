@@ -5,21 +5,29 @@ const { postFinancials } = require("./postFinancials");
 
 async function syncEnterprise() {
   const sql = await getSql();
-  const syncNumber =
-    await sql.query`select distinct syncNumber from test.enterprise`;
+  const distinctSync =
+    await sql.query`select distinct syncNumber from test.enterprise order by syncNumber desc`;
+  let currentSyncNumber = parseInt(distinctSync.recordset[distinctSync.recordset.length - 1].syncNumber);
+  let syncNumberToSet = distinctSync.recordset.length === 1 ? parseInt(distinctSync.recordset[0].syncNumber, 10) + 1 : parseInt(distinctSync.recordset[0].syncNumber, 10)
   const job =
-    await sql.query`select top(1) * from test.enterprise where syncNumber = '0'`;
+    await sql.query`select top(1) * from test.enterprise where syncNumber = ${currentSyncNumber}`;
   const enterprise = job.recordset[0];
   console.log(
-    `Sync - ${enterprise.guid} - ${enterprise.enterpriseNumberString}`
+    `syncEnterprise() - ${enterprise.guid} - ${enterprise.enterpriseNumberString}`
   );
-  console.time(`\t => getReferences()`);
+  console.time("Total time")
+  console.time(` => getReferences()`);
   const references = await getReferences(enterprise, sql);
-  console.timeEnd("\t => getReferences()");
-  console.time(`\t => getAccountingData()`);
-  const accountingDataURLS = await getAccountingData(references, sql);
-  console.timeEnd("\t => getAccountingData()");
-  await postFinancials(accountingDataURLS, sql);
+  console.timeEnd(" => getReferences()");
+  console.time(` => getAccountingData()`);
+  const accountingDataArr = await getAccountingData(references, sql);
+  console.timeEnd(" => getAccountingData()");
+  console.time(` => postFinancials()`);
+  await postFinancials(enterprise, accountingDataArr, sql);
+  console.timeEnd(" => postFinancials()");
+  console.timeEnd("Total time")
+  console.log();
+  await sql.query`update test.enterprise set syncNumber = ${syncNumberToSet}, lastSync = ${new Date()} where guid = ${enterprise.guid}`
 }
 
 module.exports = {

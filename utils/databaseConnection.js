@@ -6,11 +6,6 @@ async function getSql() {
     password: process.env.DB_PASSWORD,
     server: process.env.DB_SERVER,
     database: process.env.DB_NAME,
-    port: parseInt(process.env.DB_PORT, 10) || 1433,
-    options: {
-      encrypt: true,
-      trustServerCertificate: true,
-    },
     debug: {
       packet: true, // Log les paquets envoyés/recus
       token: true, // Log les jetons envoyés/recus
@@ -18,7 +13,7 @@ async function getSql() {
       payload: true, // Log les payloads de requête
     },
   };
-  await sql.connect(config);
+  await sql.connect(config)
   return sql;
 }
 
