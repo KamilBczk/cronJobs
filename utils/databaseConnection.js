@@ -11,6 +11,12 @@ async function getSql() {
       encrypt: true,
       trustServerCertificate: true,
     },
+    debug: {
+      packet: true, // Log les paquets envoyés/recus
+      token: true, // Log les jetons envoyés/recus
+      data: true, // Log les données
+      payload: true, // Log les payloads de requête
+    },
   };
   await sql.connect(config);
   return sql;

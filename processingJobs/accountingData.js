@@ -1,6 +1,7 @@
 const { getSql } = require("../utils/databaseConnection");
 const { v4: uuidv4 } = require("uuid");
 const { getBelgiumTime } = require("../utils/time");
+const { relations } = require("./relations");
 
 async function accountingData(record) {
   const body = JSON.parse(record.data);
@@ -25,6 +26,7 @@ async function accountingData(record) {
       return;
     }
     const accountingData = await accountingDataResponse.json();
+    await relations(accountingData, body);
     const groupedData = accountingData.Rubrics.reduce((acc, item) => {
       if (item.Period === "N" || item.Period === "NM1") {
         if (!acc[item.Period]) {
@@ -49,9 +51,9 @@ async function accountingData(record) {
     requestN.input("exerciseEndDate", sql.DateTime, body.exerciseEndDate);
     requestN.input("period", sql.VarChar(50), "N");
     requestN.input("data", sql.VarChar(sql.MAX), JSON.stringify(groupedData.N));
-    await requestN.query(
-      "INSERT INTO cbso.financial (guid, createdOn, updatedOn, entityNumber, reference, depositDate, exerciseStartDate, exerciseEndDate, period, data) VALUES (@guid, @createdOn, @updatedOn, @entityNumber, @reference, @depositDate, @exerciseStartDate, @exerciseEndDate, @period, @data)"
-    );
+    // await requestN.query(
+    //   "INSERT INTO cbso.financial (guid, createdOn, updatedOn, entityNumber, reference, depositDate, exerciseStartDate, exerciseEndDate, period, data) VALUES (@guid, @createdOn, @updatedOn, @entityNumber, @reference, @depositDate, @exerciseStartDate, @exerciseEndDate, @period, @data)"
+    // );
     if (groupedData.NM1) {
       const requestNM1 = new sql.Request();
       requestNM1.input("guid", sql.UniqueIdentifier, uuidv4());
@@ -73,12 +75,12 @@ async function accountingData(record) {
         JSON.stringify(groupedData.NM1)
       );
 
-      await requestNM1.query(
-        "INSERT INTO cbso.financial (guid, createdOn, updatedOn, entityNumber, reference, depositDate, exerciseStartDate, exerciseEndDate, period, data) VALUES (@guid, @createdOn, @updatedOn, @entityNumber, @reference, @depositDate, @exerciseStartDate, @exerciseEndDate, @period, @data)"
-      );
+      // await requestNM1.query(
+      //   "INSERT INTO cbso.financial (guid, createdOn, updatedOn, entityNumber, reference, depositDate, exerciseStartDate, exerciseEndDate, period, data) VALUES (@guid, @createdOn, @updatedOn, @entityNumber, @reference, @depositDate, @exerciseStartDate, @exerciseEndDate, @period, @data)"
+      // );
     }
   }
-  sql.query`update cbso.jobs set status = 'done' where guid = ${record.guid}`;
+  // sql.query`update cbso.jobs set status = 'done' where guid = ${record.guid}`;
 }
 
 module.exports = {
