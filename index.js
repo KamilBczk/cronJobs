@@ -8,18 +8,16 @@ const { getSql } = require("./utils/databaseConnection");
 const { syncEnterprise } = require("./sync");
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const debug = true;
+const debug = process.env.ENV === "local" ? true : false;
 
 (async () => {
   while (true) {
     try {
       await syncEnterprise(debug);
-      if (debug === true)
-        break;
+      if (debug === true) break;
     } catch (e) {
       console.log(e);
     }
     //await delay(5000); // Attendre 10 secondes avant de relancer la tâche
   }
 })();
-
