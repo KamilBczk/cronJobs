@@ -7,6 +7,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const debug = process.env.ENV === "local" ? true : false;
 
 async function getSyncNumber(sql) {
+  i = 1;
   console.log("checking sync number");
   const distinctSync =
     await sql.query`select distinct syncNumber from test.enterprise order by syncNumber desc`;
@@ -20,7 +21,7 @@ async function getSyncNumber(sql) {
   return { currentSyncNumber: currentSyncNumber, syncNumberToSet };
 }
 
-let i = 0;
+let i = 1;
 let checkSyncNumber = true;
 let currentSyncNumber;
 let syncNumberToSet;
@@ -38,7 +39,7 @@ let syncNumberToSet;
       }
       console.log(`${i}: ${currentSyncNumber}, ${syncNumberToSet}`);
       if (
-        !(await syncEnterprise(checkSyncNumber, syncNumberToSet, sql, debug))
+        !(await syncEnterprise(currentSyncNumber, syncNumberToSet, sql, debug))
       ) {
         checkSyncNumber = true;
       }

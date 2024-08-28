@@ -28,13 +28,32 @@ async function postAdministrators(accountingData, enterprise, sql) {
       const id1 = childCompany.recordset[0].guid;
       const id2 = currentCompany.guid;
 
-      const additionalInfo = { mandates: [] };
+      const additionalInfo = { mandates: [], representatives: [] };
       element.Mandates.forEach((elem) => {
         additionalInfo.mandates.push({
           functionMandate: elem.FunctionMandate,
           otherFunctionMandate: elem.OtherFunctionMandate,
           startDate: elem.MandateDates.StartDate,
           endDate: elem.MandateDates.EndDate,
+        });
+      });
+      element.Representatives.forEach((elem) => {
+        additionalInfo.representatives.push({
+          firstName: elem.FirstName,
+          lastName: elem.LastName,
+          profession: elem.Profession,
+          address: {
+            street: elem.Address.Street,
+            number: elem.Address.Number,
+            box: elem.Address.Box,
+            city: elem.Address.City,
+            otherPostalCode: elem.Address.OtherPostalCode,
+            otherCity: elem.Address.OtherCity,
+            country: elem.Address.Country,
+            otherCountry: elem.Address.OtherCountry,
+            addressType: elem.Address.AddressType,
+            otherAddressType: elem.Address.OtherAddressType,
+          },
         });
       });
       await createRelation(

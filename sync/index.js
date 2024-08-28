@@ -5,6 +5,7 @@ const { postAdministrators } = require("./postAdministrators");
 const { postFinancials } = require("./postFinancials");
 
 async function syncEnterprise(currentSyncNumber, syncNumberToSet, sql, debug) {
+  console.log(currentSyncNumber);
   let job =
     await sql.query`select top(1) * from test.enterprise where syncNumber = ${currentSyncNumber}`;
   if (job.recordset.length === 0) return false;
