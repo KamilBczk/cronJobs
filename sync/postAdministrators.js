@@ -8,15 +8,18 @@ async function postAdministrators(accountingData, enterprise, sql) {
   const shareholders = accountingData.data.Shareholders;
 
   const currentCompany = enterprise;
-
   for (let i = 0; i < administrators.LegalPersons.length; i++) {
     const element = administrators.LegalPersons[i];
-    const identifier = parseInt(element.Entity.Identifier);
+    let identifier = parseInt(element.Entity.Identifier);
 
     let childCompany;
     if (!Number.isNaN(identifier)) {
-      childCompany =
-        await sql.query`select * from prod.enterprise where enterpriseNumber = ${element.Entity.Identifier}`;
+      try {
+        childCompany =
+          await sql.query`select * from prod.enterprise where enterpriseNumber = ${element.Entity.Identifier}`;
+      } catch (e) {
+        childCompany = null;
+      }
     }
 
     if (childCompany && childCompany.recordset.length === 1) {
@@ -192,8 +195,12 @@ async function postAdministrators(accountingData, enterprise, sql) {
 
     let childCompany;
     if (!Number.isNaN(identifier)) {
-      childCompany =
-        await sql.query`select * from bce.enterprise where enterpriseNumber = ${element.Entity.Identifier}`;
+      try {
+        childCompany =
+          await sql.query`select * from bce.enterprise where enterpriseNumber = ${element.Entity.Identifier}`;
+      } catch (e) {
+        childCompany = null;
+      }
     }
     if (childCompany && childCompany.recordset.length === 1) {
       if (i === 0)
