@@ -1,10 +1,8 @@
 const { v4: uuidv4 } = require("uuid");
 
 async function postFinancials(enterprise, accountingDataArr, sql) {
-  console.log(enterprise.guid);
   const financialInDatabase =
     await sql.query`select guid, reference from cbso.financial where entityId = ${enterprise.guid} AND entityType = 'enterprise'`;
-  console.log("done check financial in db");
   for (let i = 0; i < accountingDataArr.length; i++) {
     const element = accountingDataArr[i];
     if (await checkDoubles(element.referenceData, financialInDatabase, sql))

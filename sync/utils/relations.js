@@ -1,10 +1,4 @@
-const { getBelgiumTime } = require("./time");
 const { v4: uuidv4 } = require("uuid");
-
-// TODO: NOT FINISHED
-async function checkRelations(sql, id1, id2, forwardName) {
-  sql.query`select * from cbso.relations where id1 = ${id1} AND id2 = ${id2} and forward`;
-}
 
 async function deleteRelations(sql, id2, forwardName) {
   sql.query`delete from cbso.relations where id2 = ${id2} AND forwardName = ${forwardName}`;
@@ -22,8 +16,8 @@ async function createRelation(
 ) {
   const request = new sql.Request();
   request.input("guid", sql.UniqueIdentifier, uuidv4());
-  request.input("createdOn", sql.DateTime, getBelgiumTime());
-  request.input("updatedOn", sql.DateTime, getBelgiumTime());
+  request.input("createdOn", sql.DateTime, new Date());
+  request.input("updatedOn", sql.DateTime, new Date());
   request.input("id1", sql.UniqueIdentifier, id1);
   request.input("type1", sql.VarChar(50), type1);
   request.input("id2", sql.UniqueIdentifier, id2);

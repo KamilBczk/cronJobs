@@ -1,6 +1,7 @@
 const { getSql } = require("../utils/databaseConnection");
 const { getAccountingData } = require("./getAccountingData");
 const { getReferences } = require("./getReferences");
+const { postAdministrators } = require("./postAdministrators");
 const { postFinancials } = require("./postFinancials");
 
 async function syncEnterprise(currentSyncNumber, syncNumberToSet, sql, debug) {
@@ -9,11 +10,11 @@ async function syncEnterprise(currentSyncNumber, syncNumberToSet, sql, debug) {
   if (job.recordset.length === 0) return false;
   if (debug === true)
     job.recordset[0] = {
-      guid: "59C05626-3D17-447F-A01D-0010C5351A5C",
+      guid: "B925FDCF-9CD7-4FCC-9EAD-F7C6C1FDA766",
       createdOn: "2024-08-19T17:15:38.200Z",
       updatedOn: "2024-08-19T17:15:38.200Z",
-      enterpriseNumber: "723910604",
-      enterpriseNumberString: "0723.910.604",
+      enterpriseNumber: "403275718",
+      enterpriseNumberString: "0403.275.718",
       syncNumber: "0",
       lastSync: null,
     };
@@ -31,6 +32,9 @@ async function syncEnterprise(currentSyncNumber, syncNumberToSet, sql, debug) {
   console.time(` => postFinancials()`);
   await postFinancials(enterprise, accountingDataArr, sql);
   console.timeEnd(" => postFinancials()");
+  console.time(` => postAdministrators()`);
+  await postAdministrators(accountingDataArr[0], enterprise, sql);
+  console.timeEnd(` => postAdministrators()`);
   console.timeEnd("Total time");
   console.log();
   if (debug !== true)

@@ -1,9 +1,5 @@
 const cron = require("node-cron");
 require("dotenv").config();
-const { splitJobs } = require("./processingJobs/splitJobs");
-const { dailyExtract } = require("./dailyExtract/index");
-const { getBelgiumTime } = require("./utils/time");
-const { relations } = require("./processingJobs/relations");
 const { getSql } = require("./utils/databaseConnection");
 const { syncEnterprise } = require("./sync");
 
