@@ -16,7 +16,7 @@ async function postAdministrators(accountingData, enterprise, sql) {
     if (!Number.isNaN(identifier)) {
       try {
         childCompany =
-          await sql.query`select * from prod.enterprise where enterpriseNumber = ${element.Entity.Identifier}`;
+          await sql.query`select * from prod.enterprise where enterpriseNumber = ${identifier}`;
       } catch (e) {
         childCompany = null;
       }
@@ -216,7 +216,7 @@ async function postAdministrators(accountingData, enterprise, sql) {
     if (!Number.isNaN(identifier)) {
       try {
         childCompany =
-          await sql.query`select * from bce.enterprise where enterpriseNumber = ${element.Entity.Identifier}`;
+          await sql.query`select * from prod.enterprise where enterpriseNumber = ${identifier}`;
       } catch (e) {
         childCompany = null;
       }
