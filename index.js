@@ -1,51 +1,44 @@
 const cron = require("node-cron");
 require("dotenv").config();
 const { getSql } = require("./utils/databaseConnection");
-const { syncEnterprise } = require("./sync");
-
+const { getFinancials } = require("./getFinancials");
+const { connectToMongoDB } = require("./config/mongodb");
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const debug = process.env.ENV === "local" ? true : false;
 
-async function getSyncNumber(sql) {
-  i = 1;
-  console.log("checking sync number");
-  const distinctSync =
-    await sql.query`select distinct syncNumber from test.enterprise order by syncNumber desc`;
-  let currentSyncNumber = parseInt(
-    distinctSync.recordset[distinctSync.recordset.length - 1].syncNumber
-  );
-  let syncNumberToSet =
-    distinctSync.recordset.length === 1
-      ? parseInt(distinctSync.recordset[0].syncNumber, 10) + 1
-      : parseInt(distinctSync.recordset[0].syncNumber, 10);
-  return { currentSyncNumber: currentSyncNumber, syncNumberToSet };
+async function getJobs(sql) {
+  const jobs =
+    await sql.query`SELECT TOP (20) * FROM [cronJobs].[enterprises] order by lastFinancialSync asc`;
+  return jobs.recordset;
 }
 
-let i = 1;
-let checkSyncNumber = true;
-let currentSyncNumber;
-let syncNumberToSet;
+let jobs = [];
 
 (async () => {
   while (true) {
     try {
+      await connectToMongoDB();
       const sql = await getSql();
-
-      if (checkSyncNumber) {
-        const syncNumbers = await getSyncNumber(sql);
-        currentSyncNumber = syncNumbers.currentSyncNumber;
-        syncNumberToSet = syncNumbers.syncNumberToSet;
-        checkSyncNumber = false;
+      if (jobs.length === 0) {
+        jobs = await getJobs(sql);
+      } else {
+        const enterpriseNumbers = [];
+        for (const enterprise of jobs) {
+          console.log(enterprise.enterpriseNumber);
+          await getFinancials(enterprise);
+          enterpriseNumbers.push(enterprise.enterpriseNumber);
+        }
+        if (enterpriseNumbers.length > 0) {
+          for (const enterpriseNumber of enterpriseNumbers) {
+            await sql.query`
+              UPDATE [cronJobs].[enterprises] 
+              SET lastFinancialSync = GETDATE()
+              WHERE enterpriseNumber = ${enterpriseNumber}
+            `;
+          }
+        }
+        jobs = [];
       }
-      console.log(`${i}: ${currentSyncNumber}, ${syncNumberToSet}`);
-      if (
-        !(await syncEnterprise(currentSyncNumber, syncNumberToSet, sql, debug))
-      ) {
-        checkSyncNumber = true;
-      }
-      if (i % 100 === 0) checkSyncNumber = true;
-      i++;
-      if (debug === true) break;
     } catch (e) {
       console.log(e);
     }

@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 
-async function getReferences(enterprise, sql) {
+async function getReferences(enterpriseNumberString) {
   let yearsToFetch = getYearsToFetch();
 
   let reference = {};
@@ -8,7 +8,7 @@ async function getReferences(enterprise, sql) {
   for (let i = 0; i < yearsToFetch.length; i++) {
     const element = yearsToFetch[i];
     reference[element] = await getReference(
-      enterprise.enterpriseNumberString.replaceAll(".", ""),
+      enterpriseNumberString.replaceAll(".", ""),
       element
     );
   }
@@ -26,15 +26,12 @@ async function getReference(enterpriseNumber, year) {
       },
     });
 
-    // Vérifiez si la réponse est OK (code de statut HTTP 200-299)
     if (!response.ok) {
-      //console.error(`Erreur lors de la récupération des données : ${response.statusText}`);
       return null;
     }
 
     return await response.json();
   } catch (error) {
-    //console.error(`Erreur de requête : ${error.message}`);
     return null;
   }
 }

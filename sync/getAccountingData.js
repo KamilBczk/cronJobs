@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 
-async function getAccountingData(references, sql) {
+async function getAccountingData(references) {
   const yearsToFetch = references.yearsToFetch;
   let allAccountingData = [];
   for (let i = 0; i < yearsToFetch.length; i++) {
